@@ -5,12 +5,12 @@ class PandasManipulator():
     """
     Use this class to manipulate a Pandas dataframe and get new data.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.__column_change = ""
         self.__new_value = ""
         self.__old_value = None
 
-    def config(self, **kwargs):
+    def config(self, **kwargs: dict) -> None:
         """
         Use this method to configure the PandasManipulator settings.
         """
@@ -24,7 +24,7 @@ class PandasManipulator():
             elif key == "old_value":
                 self.__old_value = value
 
-    def apply(self, dataframe):
+    def apply(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """
         Use this method to apply the manipulation on a dataframe
         """
@@ -45,12 +45,12 @@ class NumpyNumericalManipulator():
     """
     Use this class to manipulate a Numpy array and get new data.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.__column_change = 0
         self.__new_value = ""
         self.__old_value = None
 
-    def config(self, **kwargs):
+    def config(self, **kwargs: dict) -> None:
         """
         Use this method to configure the NumpyNumericalManipulator settings.
         """
@@ -64,7 +64,7 @@ class NumpyNumericalManipulator():
             elif key == "old_value":
                 self.__old_value = value
 
-    def apply(self, array):
+    def apply(self, array: np.ndarray) -> nd.nparray:
         """
         Use this method to apply the manipulation on a dataframe
         """
@@ -84,11 +84,11 @@ class NumpyCategoricalManipulator():
     """
     Use this class to manipulate a Numpy Array and get new data.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.__old_columns = 0
         self.__new_column = 0
 
-    def config(self, **kwargs):
+    def config(self, **kwargs: dict) -> None:
         """
         Use this method to configure the NumpyCategoricalManipulator settings.
         """
@@ -99,7 +99,7 @@ class NumpyCategoricalManipulator():
             elif key == "new_column":
                 self.__new_column = value
 
-    def apply(self, array):
+    def apply(self, array: np.ndarray) -> np.ndarray:
         """
         Use this method to apply the manipulation on a dataframe
         """
