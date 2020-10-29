@@ -8,7 +8,7 @@ class CategoricalCase():
         self.__column = column
         self.__name = column
 
-    def get(self, key: str) -> Union(str, int):
+    def get(self, key: str) -> Union[str, int]:
         """
         Thie is a getter method for CategoricalCase class.
         """
