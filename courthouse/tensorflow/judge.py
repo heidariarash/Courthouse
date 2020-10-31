@@ -89,3 +89,13 @@ class CategoricalJudge:
             print(f"\t{ones} time(s) the model predict 1. This is the case for {ones/len(self.__new_out) * 100}% of the data.")
             print(f"\t{len(self.__new_out) - ones} time(s) the model predict 0. This is the case for {(1 - ones/len(self.__new_out)) * 100}% of the data.")
 
+    def faced_discrimination(self) -> list:
+        """
+        Use this method to get a list of datapoints, for which the prediction would be different if the case was different.
+        """
+        differnet = []
+        for i, output in enumerate(self.__org_out):
+            if output != self.__new_out[i]:
+                differnet.append(self.__org_data[i])
+
+        return differnet
