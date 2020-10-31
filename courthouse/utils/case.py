@@ -6,7 +6,7 @@ class CategoricalCase():
     """
     def __init__(self, column: int, name: str) -> None:
         self.__column = column
-        self.__name = column
+        self.__name = name
 
     def get(self, key: str) -> Union[str, int]:
         """
