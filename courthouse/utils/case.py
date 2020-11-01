@@ -1,6 +1,6 @@
 from typing import Union
 
-class CategoricalCase():
+class CategoricalCase:
     """
     Use this class to specify a categorical case.
     """
