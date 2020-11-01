@@ -43,7 +43,7 @@ class CategoricalJudge:
             for output in new_predict:
                 self.__new_out.append(np.argmax(output))
 
-        if output_type == "binary_sigmoid":
+        elif output_type == "binary_sigmoid":
             self.__org_out = []
             self.__new_out = []
 
@@ -53,7 +53,7 @@ class CategoricalJudge:
             for output in new_predict:
                 self.__new_out.append(1 if output>=0.5 else 0)
 
-        if output_type == "binary_tanh":
+        elif output_type == "binary_tanh":
             self.__org_out = []
             self.__new_out = []
 
@@ -77,17 +77,36 @@ class CategoricalJudge:
 
         print(f"There are {self.__org_data.shape[0]} \"{self.__old_case.get('name')}\" to be found.\n")
         print("When the model was applied to the original dataset, these results where obtained:")
-        if self.__output_type == "binary_sigmoid":
+        if self.__output_type == "binary_sigmoid" or self.__output_type == "binary_tanh":
             ones = sum(filter(lambda x: x==1, self.__org_out))
-            print(f"\t{ones} time(s) the model predict 1. This is the case for {ones/len(self.__org_out)*100}% of the data.")
-            print(f"\t{len(self.__org_out) - ones} time(s) the model predict 0. This is the case for {(1 - ones/len(self.__org_out))* 100}% of the data.\n")
+            print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__org_out)*100}% of the data.")
+            print(f"\t{len(self.__org_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__org_out))* 100}% of the data.\n")
 
             print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
             print("These results were obtained after applying the model on the new data.")
 
             ones = sum(filter(lambda x: x==1, self.__new_out))
-            print(f"\t{ones} time(s) the model predict 1. This is the case for {ones/len(self.__new_out) * 100}% of the data.")
-            print(f"\t{len(self.__new_out) - ones} time(s) the model predict 0. This is the case for {(1 - ones/len(self.__new_out)) * 100}% of the data.")
+            print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__new_out) * 100}% of the data.")
+            print(f"\t{len(self.__new_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__new_out)) * 100}% of the data.")
+
+        elif self.__output_type == "categorical":
+            results = {}
+            for output in self.__org_out:
+                results[output] = results.get(output, 0) + 1
+            
+            for key, value in results.items():
+                print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
+            print("\n")
+
+            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print("These results were obtained after applying the model on the new data.")
+
+            results = {}
+            for output in self.__new_out:
+                results[output] = results.get(output, 0) + 1
+            
+            for key, value in results.items():
+                print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
 
     def faced_discrimination(self) -> list:
         """
