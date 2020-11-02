@@ -70,13 +70,24 @@ class CategoricalJudge:
             self.__org_out = []
             self.__new_out = []
 
-            for output in org_predict:
+            for output in org_predict.data:
                 self.__org_out.append(1 if output>=0.5 else 0)
 
-            for output in new_predict:
+            for output in new_predict.data:
                 self.__new_out.append(1 if output>=0.5 else 0)
 
-        # elif output_type == "categorical_without_logits":
+        elif output_type == "categorical_without_softmax":
+            org_predict = org_predict.data.numpy()
+            new_predict = new_predict.data.numpy()
+
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(np.argmax(output))
+
+            for output in new_predict:
+                self.__new_out.append(np.argmax(output))
 
         else:
             self.__output_type = None
@@ -104,7 +115,7 @@ class CategoricalJudge:
             print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__new_out) * 100}% of the data.")
             print(f"\t{len(self.__new_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__new_out)) * 100}% of the data.")
 
-        elif self.__output_type == "categorical":
+        elif self.__output_type == "categorical" or self.__output_type == "categorical_without_softmax":
             results = {}
             for output in self.__org_out:
                 results[output] = results.get(output, 0) + 1
