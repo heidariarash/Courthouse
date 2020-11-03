@@ -26,13 +26,15 @@ class CategoricalJudge:
         self.__new_data = self.__org_data.copy()
         self.__new_data[:, change_from.get("column")] = 0
         self.__new_data[:, change_towards.get("column")] = 1
+        print(self.__org_data)
+        print(self.__new_data)
 
     def judge(self, model:nn.Module, output_type: str) -> None:
         """
         Use this method to judge your model fairness.
         """
         org_predict = model(torch.from_numpy(self.__org_data).type('torch.FloatTensor'))
-        new_predict = model(torch.from_numpy(self.__org_data).type('torch.FloatTensor'))
+        new_predict = model(torch.from_numpy(self.__new_data).type('torch.FloatTensor'))
         self.__output_type = output_type
         if output_type == "categorical":
             self.__org_out = []
@@ -75,6 +77,17 @@ class CategoricalJudge:
 
             for output in new_predict.data:
                 self.__new_out.append(1 if output>=0.5 else 0)
+
+        elif output_type == "regression":
+            self.__org_out = []
+            self.__new_out = []
+
+            self.__org_out.append(torch.mean(org_predict).data.numpy())
+            self.__org_out.append(torch.min(org_predict).data.numpy())
+            self.__org_out.append(torch.max(org_predict).data.numpy())
+            self.__new_out.append(torch.mean(new_predict).data.numpy())
+            self.__new_out.append(torch.min(new_predict).data.numpy())
+            self.__new_out.append(torch.max(new_predict).data.numpy())
 
         else:
             self.__output_type = None
@@ -120,6 +133,16 @@ class CategoricalJudge:
             
             for key, value in results.items():
                 print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
+
+        elif self.__output_type == "regression":
+            print(f"\tMean of the predictions: {self.__org_out[0]}")
+            print(f"\tMinimum of the predictions: {self.__org_out[1]}")
+            print(f"\tMaximum of the predictions: {self.__org_out[2]}\n")
+            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print("These results were obtained after applying the model on the new data.")
+            print(f"\tMean of the predictions: {self.__new_out[0]}")
+            print(f"\tMaximum of the predictions: {self.__new_out[1]}")
+            print(f"\tMaximum of the predictions: {self.__new_out[2]}")
 
     def faced_discrimination(self) -> list:
         """
