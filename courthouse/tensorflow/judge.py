@@ -31,7 +31,7 @@ class CategoricalJudge:
         Use this method to judge your model fairness.
         """
         org_predict = model.predict(self.__org_data)
-        new_predict = model.predict(self.__org_data)
+        new_predict = model.predict(self.__new_data)
         self.__output_type = output_type
         if output_type == "categorical":
             self.__org_out = []
