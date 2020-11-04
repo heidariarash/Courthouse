@@ -133,6 +133,10 @@ class CategoricalJudge:
         """
         Use this method to get a list of datapoints, for which the prediction would be different if the case was different.
         """
+        if self.__output_type == "regression":
+            print("You can not use this method on a regression problem.")
+            return
+            
         differnet = []
         for i, output in enumerate(self.__org_out):
             if output != self.__new_out[i]:
@@ -269,6 +273,10 @@ class NumericalJudge:
         """
         Use this method to get a list of datapoints, for which the prediction would be different if the case was different.
         """
+        if self.__output_type == "regression":
+            print("You can not use this method on a regression problem.")
+            return
+
         differnet = []
         for i, output in enumerate(self.__org_out):
             if output != self.__new_out[i]:
