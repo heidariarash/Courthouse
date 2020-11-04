@@ -1,4 +1,4 @@
-from courthouse.utils.case import CategoricalCase
+from courthouse.utils.case import CategoricalCase, NumericalCase
 import numpy as np
 import tensorflow as tf
 
@@ -139,3 +139,25 @@ class CategoricalJudge:
                 differnet.append(self.__org_data[i])
 
         return differnet
+
+
+class NumericalJudge:
+    """
+    Use this class to judge your model to see if it is fair or not.
+    """
+    def __init__(self) -> None:
+        self.__org_data = None
+        self.__new_data = None
+        self.__case = None
+        self.__org_out = None
+        self.__new_out = None
+        self.__output_type = None
+
+    def case(self, case:NumericalCase, data: np.ndarray, change_amount: int) -> None:
+        """
+        Use this method to specify
+        """
+        self.__case = case
+        self.__org_data = data
+        self.__new_data = data.copy()
+        self.__new_data[case.get("column")] = self.__new_data[case.get["column"]] + change_amount
