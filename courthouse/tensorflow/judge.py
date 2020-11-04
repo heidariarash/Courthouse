@@ -93,7 +93,7 @@ class CategoricalJudge:
             print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__org_out)*100}% of the data.")
             print(f"\t{len(self.__org_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__org_out))* 100}% of the data.\n")
 
-            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print(f"Then the value of {self.__case.get("name")} changed.\n")
             print("These results were obtained after applying the model on the new data.")
 
             ones = sum(filter(lambda x: x==1, self.__new_out))
@@ -109,7 +109,7 @@ class CategoricalJudge:
                 print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
             print("\n")
 
-            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print(f"Then the value of {self.__case.get("name")} changed.\n")
             print("These results were obtained after applying the model on the new data.")
 
             results = {}
@@ -123,7 +123,7 @@ class CategoricalJudge:
             print(f"\tMean of the predictions: {self.__org_out[0]}")
             print(f"\tMinimum of the predictions: {self.__org_out[1]}")
             print(f"\tMaximum of the predictions: {self.__org_out[2]}\n")
-            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print(f"Then the value of {self.__case.get("name")} changed.\n")
             print("These results were obtained after applying the model on the new data.")
             print(f"\tMean of the predictions: {self.__new_out[0]}")
             print(f"\tMaximum of the predictions: {self.__new_out[1]}")
@@ -213,3 +213,65 @@ class NumericalJudge:
         else:
             self.__output_type = None
             raise Exception(f'{output_type} output_type is not defined.')
+
+    def verdict(self) -> str:
+        """
+        Use this method to print the report of the fairness of the model.
+        """
+        #checking if the model is actually judged
+        if self.__output_type is None:
+            print('No model has been judged yet.')
+
+        print(f"There are {self.__org_data.shape[0]} datapoint in original dataset.\n")
+        print("When the model was applied to the original dataset, these results where obtained:")
+        if self.__output_type == "binary_sigmoid" or self.__output_type == "binary_tanh":
+            ones = sum(filter(lambda x: x==1, self.__org_out))
+            print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__org_out)*100}% of the data.")
+            print(f"\t{len(self.__org_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__org_out))* 100}% of the data.\n")
+
+            print(f"Then the value of {self.__case.get("name")} changed.\n")
+            print("These results were obtained after applying the model on the new data.")
+
+            ones = sum(filter(lambda x: x==1, self.__new_out))
+            print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__new_out) * 100}% of the data.")
+            print(f"\t{len(self.__new_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__new_out)) * 100}% of the data.")
+
+        elif self.__output_type == "categorical":
+            results = {}
+            for output in self.__org_out:
+                results[output] = results.get(output, 0) + 1
+            
+            for key, value in results.items():
+                print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
+            print("\n")
+
+            print(f"Then the value of {self.__case.get("name")} changed.\n")
+            print("These results were obtained after applying the model on the new data.")
+
+            results = {}
+            for output in self.__new_out:
+                results[output] = results.get(output, 0) + 1
+            
+            for key, value in results.items():
+                print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
+                
+        elif self.__output_type == "regression":
+            print(f"\tMean of the predictions: {self.__org_out[0]}")
+            print(f"\tMinimum of the predictions: {self.__org_out[1]}")
+            print(f"\tMaximum of the predictions: {self.__org_out[2]}\n")
+            print(f"Then the value of {self.__case.get("name")} changed.\n")
+            print("These results were obtained after applying the model on the new data.")
+            print(f"\tMean of the predictions: {self.__new_out[0]}")
+            print(f"\tMaximum of the predictions: {self.__new_out[1]}")
+            print(f"\tMaximum of the predictions: {self.__new_out[2]}")
+
+    def faced_discrimination(self) -> list:
+        """
+        Use this method to get a list of datapoints, for which the prediction would be different if the case was different.
+        """
+        differnet = []
+        for i, output in enumerate(self.__org_out):
+            if output != self.__new_out[i]:
+                differnet.append(self.__org_data[i])
+
+        return differnet
