@@ -161,3 +161,55 @@ class NumericalJudge:
         self.__org_data = data
         self.__new_data = data.copy()
         self.__new_data[case.get("column")] = self.__new_data[case.get["column"]] + change_amount
+
+    def judge(self, model:tf.keras.Model, output_type: str) -> None:
+        """
+        Use this method to judge your model fairness.
+        """
+        org_predict = model.predict(self.__org_data)
+        new_predict = model.predict(self.__new_data)
+        self.__output_type = output_type
+        if output_type == "categorical":
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(np.argmax(output))
+
+            for output in new_predict:
+                self.__new_out.append(np.argmax(output))
+
+        elif output_type == "binary_sigmoid":
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(1 if output>=0.5 else 0)
+
+            for output in new_predict:
+                self.__new_out.append(1 if output>=0.5 else 0)
+
+        elif output_type == "binary_tanh":
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(1 if output>=0 else 0)
+
+            for output in new_predict:
+                self.__new_out.append(1 if output>=0 else 0)
+
+        elif output_type == "regression":
+            self.__org_out = []
+            self.__new_out = []
+
+            self.__org_out.append(np.mean(org_predict))
+            self.__org_out.append(np.min(org_predict))
+            self.__org_out.append(np.max(org_predict))
+            self.__new_out.append(np.mean(new_predict))
+            self.__new_out.append(np.min(new_predict))
+            self.__new_out.append(np.max(new_predict))
+
+        else:
+            self.__output_type = None
+            raise Exception(f'{output_type} output_type is not defined.')
