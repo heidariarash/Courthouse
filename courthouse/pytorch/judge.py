@@ -172,4 +172,11 @@ class NumericalJudge:
         self.__new_out = None
         self.__output_type = None
 
-    
+    def case(self, case:NumericalCase, data: np.ndarray, change_amount: int) -> None:
+        """
+        Use this method to specify
+        """
+        self.__case = case
+        self.__org_data = data
+        self.__new_data = data.copy()
+        self.__new_data[case.get("column")] = self.__new_data[case.get["column"]] + change_amount
