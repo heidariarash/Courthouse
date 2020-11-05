@@ -179,7 +179,7 @@ class NumericalJudge:
         self.__case = case
         self.__org_data = data
         self.__new_data = data.copy()
-        self.__new_data[case.get("column")] = self.__new_data[case.get["column"]] + change_amount
+        self.__new_data[:, case.get("column")] = self.__new_data[:, case.get("column")] + change_amount
 
     def judge(self, model:nn.Module, output_type: str) -> None:
         """
@@ -187,6 +187,8 @@ class NumericalJudge:
         """
         org_predict = model(torch.from_numpy(self.__org_data).type('torch.FloatTensor'))
         new_predict = model(torch.from_numpy(self.__new_data).type('torch.FloatTensor'))
+        print(self.__new_data)
+        print(self.__org_data)
         self.__output_type = output_type
         if output_type == "categorical":
             self.__org_out = []
@@ -253,14 +255,18 @@ class NumericalJudge:
         if self.__output_type is None:
             print('No model has been judged yet.')
 
-        print(f"There are {self.__org_data.shape[0]} \"{self.__old_case.get('name')}\" to be found.\n")
+        print(self.__new_out)
+        print(self.__org_out)
+
+        print(f"There are {self.__org_data.shape[0]} datapoint in original dataset.\n")
         print("When the model was applied to the original dataset, these results where obtained:")
         if self.__output_type == "binary_sigmoid" or self.__output_type == "binary_tanh" or self.__output_type == "binary_with_logits":
             ones = sum(filter(lambda x: x==1, self.__org_out))
             print(f"\t{ones} time(s) the model predicted 1. This is the case for {ones/len(self.__org_out)*100}% of the data.")
             print(f"\t{len(self.__org_out) - ones} time(s) the model predicted 0. This is the case for {(1 - ones/len(self.__org_out))* 100}% of the data.\n")
 
-            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print(f"Then the value of {self.__case.get('name')} changed.")
+            print("\n")
             print("These results were obtained after applying the model on the new data.")
 
             ones = sum(filter(lambda x: x==1, self.__new_out))
@@ -276,7 +282,8 @@ class NumericalJudge:
                 print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
             print("\n")
 
-            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print(f"Then the value of {self.__case.get('name')} changed.")
+            print("\n")
             print("These results were obtained after applying the model on the new data.")
 
             results = {}
@@ -285,12 +292,13 @@ class NumericalJudge:
             
             for key, value in results.items():
                 print(f"\t{value} time(s) the model predicted {key}. This is the case for {value/len(self.__org_out)*100}% of the data.")
-
+                
         elif self.__output_type == "regression":
             print(f"\tMean of the predictions: {self.__org_out[0]}")
             print(f"\tMinimum of the predictions: {self.__org_out[1]}")
             print(f"\tMaximum of the predictions: {self.__org_out[2]}\n")
-            print(f"Then dataset was changed in a way that all the {self.__old_case.get('name')} were changed to {self.__new_case.get('name')}.\n")
+            print(f"Then the value of {self.__case.get('name')} changed.")
+            print("\n")
             print("These results were obtained after applying the model on the new data.")
             print(f"\tMean of the predictions: {self.__new_out[0]}")
             print(f"\tMaximum of the predictions: {self.__new_out[1]}")
