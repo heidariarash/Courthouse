@@ -180,3 +180,67 @@ class NumericalJudge:
         self.__org_data = data
         self.__new_data = data.copy()
         self.__new_data[case.get("column")] = self.__new_data[case.get["column"]] + change_amount
+
+    def judge(self, model:nn.Module, output_type: str) -> None:
+        """
+        Use this method to judge your model fairness.
+        """
+        org_predict = model(torch.from_numpy(self.__org_data).type('torch.FloatTensor'))
+        new_predict = model(torch.from_numpy(self.__new_data).type('torch.FloatTensor'))
+        self.__output_type = output_type
+        if output_type == "categorical":
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(np.argmax(output))
+
+            for output in new_predict:
+                self.__new_out.append(np.argmax(output))
+
+        elif output_type == "binary_sigmoid":
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(1 if output>=0.5 else 0)
+
+            for output in new_predict:
+                self.__new_out.append(1 if output>=0.5 else 0)
+
+        elif output_type == "binary_tanh":
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict:
+                self.__org_out.append(1 if output>=0 else 0)
+
+            for output in new_predict:
+                self.__new_out.append(1 if output>=0 else 0)
+
+        elif output_type == "binary_with_logits":
+            org_predict = torch.sigmoid(org_predict)
+            new_predict = torch.sigmoid(new_predict)
+            self.__org_out = []
+            self.__new_out = []
+
+            for output in org_predict.data:
+                self.__org_out.append(1 if output>=0.5 else 0)
+
+            for output in new_predict.data:
+                self.__new_out.append(1 if output>=0.5 else 0)
+
+        elif output_type == "regression":
+            self.__org_out = []
+            self.__new_out = []
+
+            self.__org_out.append(torch.mean(org_predict).data.numpy())
+            self.__org_out.append(torch.min(org_predict).data.numpy())
+            self.__org_out.append(torch.max(org_predict).data.numpy())
+            self.__new_out.append(torch.mean(new_predict).data.numpy())
+            self.__new_out.append(torch.min(new_predict).data.numpy())
+            self.__new_out.append(torch.max(new_predict).data.numpy())
+
+        else:
+            self.__output_type = None
+            raise Exception(f'{output_type} output_type is not defined.')
