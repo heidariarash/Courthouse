@@ -152,10 +152,10 @@ class CategoricalJudge:
             print("You can not use this method on a regression problem.")
             return
             
-        differnet = []
+        differnet = {}
         for i, output in enumerate(self.__org_out):
             if output != self.__new_out[i]:
-                differnet.append(self.__org_data[i])
+                differnet[i] = self.__org_data[i]
 
         return differnet
 
@@ -312,9 +312,9 @@ class NumericalJudge:
             print("You can not use this method on a regression problem.")
             return
             
-        differnet = []
+        differnet = {}
         for i, output in enumerate(self.__org_out):
             if output != self.__new_out[i]:
-                differnet.append(self.__org_data[i])
+                differnet[i] = self.__org_data[i]
 
         return differnet
