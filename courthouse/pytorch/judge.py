@@ -158,3 +158,18 @@ class CategoricalJudge:
                 differnet.append(self.__org_data[i])
 
         return differnet
+
+
+class NumericalJudge:
+    """
+    Use this class to judge your model to see if it is fair or not.
+    """
+    def __init__(self) -> None:
+        self.__org_data = None
+        self.__new_data = None
+        self.__case = None
+        self.__org_out = None
+        self.__new_out = None
+        self.__output_type = None
+
+    
