@@ -53,5 +53,13 @@ faced_discrimination = judge.faced_discrimination()
 ```
 The four steps are:
 
-1. Instantiate a Categorical Judge
-2. define the case: In this case we are saying to Courthouse that we want to see if changing the sex from woman to man has an effect on the prediction of the model. We indicate that the one-hot encoded for sex is column number 2 (counting from 0).
+First:  Instantiate a Categorical Judge
+
+Second: define the case: In this case we are saying to Courthouse that we want to see if changing the sex from woman to man has an effect on the prediction of the model. We indicate that the one-hot encoded for sex is column number 2 (counting from 0). You should define the column number in the first case. Let's show another example for three races: black is column number 1, white is column number 2, and if both columns are zero, it indicates a brown person for example. The following example shows that we want to see the effect if the 
+```python
+judge.case(
+    data,
+    CategoricalCase(name = "white", column = 2),
+    CategoricalCase(name = "Black", column = 1)
+)
+```
