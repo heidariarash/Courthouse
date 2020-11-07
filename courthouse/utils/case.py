@@ -4,7 +4,7 @@ class CategoricalCase:
     """
     Use this class to specify a categorical case.
     """
-    def __init__(self, column: int, name: str) -> None:
+    def __init__(self, name: str, column: Union[int, list, None] = None) -> None:
         self.__column = column
         self.__name = name
 
