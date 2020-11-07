@@ -23,9 +23,15 @@ class CategoricalJudge:
         self.__new_case = change_towards
         self.__org_data = data[data[:, change_from.get("column")] == 1]
         self.__new_data = self.__org_data.copy()
-        self.__new_data[:, change_from.get("column")] = 0
         if change_towards.get("column") is not None:
+            self.__new_data[:, change_from.get("column")] = 0
             self.__new_data[:, change_towards.get("column")] = 1
+        elif type(change_from.get("column")) == list or type(change_from.get("column")) == tuple:
+            self.__new_data[:, change_from.get("column")] = 0
+        elif type(change_from.get("column")) == int:
+            self.__new_data[:, change_from.get("column")] = 1 - self.__new_data[:, change_from.get("column")]
+        else:
+            raise Exception("type of column in Case should be int, tuple, or list")
 
     def judge(self, model:tf.keras.Model, output_type: str) -> None:
         """
