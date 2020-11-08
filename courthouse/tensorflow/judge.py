@@ -17,21 +17,33 @@ class CategoricalJudge:
 
     def case(self, data: np.ndarray, change_from: CategoricalCase , change_towards: CategoricalCase) -> None:
         """
-        Use this method to specify
+        Use this method to specify the transformation from the old case to the new case
         """
         self.__old_case = change_from
         self.__new_case = change_towards
-        self.__org_data = data[data[:, change_from.get("column")] == 1]
-        self.__new_data = self.__org_data.copy()
-        if change_towards.get("column") is not None:
+        #binary
+        if change_from.get("binary") != -1:
+            self.__org_data = data[data[:, change_from.get("column")] == change_from.get("binary")]
+            self.__new_data = self.__org_data.copy()
+            self.__new_data[:, change_from.get("column")] = 1 - self.__new_data[:, change_from.get("column")]
+        #column to non column
+        elif change_towards.get("column") is None:
+            self.__org_data = data[data[:, change_from.get("column")] == 1]
+            self.__new_data = self.__org_data.copy()
+            self.__new_data[:, change_from.get("column")] = 0
+        #non column to column
+        elif type(change_from.get("column")) == list or type(change_from.get("column")) == tuple:
+            self.__org_data = data
+            for column in change_from.get("column"):
+                self.__org_data = self.__org_data[self.__org_data[:, column] == 0]
+            self.__new_data = self.__org_data.copy()
+            self.__new_data[:, change_towards.get("column")] = 1
+        #column to column
+        else:
+            self.__org_data = data[data[:, change_from.get("column")] == 1]
+            self.__new_data = self.__org_data.copy()
             self.__new_data[:, change_from.get("column")] = 0
             self.__new_data[:, change_towards.get("column")] = 1
-        elif type(change_from.get("column")) == list or type(change_from.get("column")) == tuple:
-            self.__new_data[:, change_from.get("column")] = 0
-        elif type(change_from.get("column")) == int:
-            self.__new_data[:, change_from.get("column")] = 1 - self.__new_data[:, change_from.get("column")]
-        else:
-            raise Exception("type of column in Case should be int, tuple, or list")
 
     def judge(self, model:tf.keras.Model, output_type: str) -> None:
         """
