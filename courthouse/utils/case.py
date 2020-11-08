@@ -4,9 +4,10 @@ class CategoricalCase:
     """
     Use this class to specify a categorical case.
     """
-    def __init__(self, name: str, column: Union[int, list, None] = None) -> None:
+    def __init__(self, name: str, column: Union[int, list, None] = None, binary = -1) -> None:
         self.__column = column
         self.__name = name
+        self.__binary = binary
 
     def get(self, key: str) -> Union[str, int]:
         """
@@ -17,6 +18,9 @@ class CategoricalCase:
 
         elif key == "name":
             return self.__name
+
+        elif key == "binary":
+            return self.__binary
 
 
 class NumericalCase:
