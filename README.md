@@ -109,5 +109,4 @@ That's all. If you want to see which dataponit faced discrimination when you cha
 ```python
 judge.faced_discrminiation()
 ```
-This method outputs a list of datapoints which encountered discrimination.
-
+This method outputs a dictionary of datapoints which encountered discrimination. Keys are just simple indices, and values are actual datapoints.
