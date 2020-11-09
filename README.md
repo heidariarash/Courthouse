@@ -131,7 +131,7 @@ and optionaly
 ```python
 faced_discrimination = judge.faced_discrimination()
 ```
-In the example above, we defined a numerical judge, and wanted to judge the model based on increasing the weight for 30 (kg). That's it.
+In the example above, we defined a numerical judge, and wanted to judge the model based on increasing the weight by 30 (kg). That's it.
 
 ### Important Note
 You can not use faced_discrimination method when the output_type of the model is regression.
