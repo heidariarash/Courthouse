@@ -27,7 +27,7 @@ class NumericalCase:
     """
     Use this class to specify a numerical case.
     """
-    def __init__(self, column: int, name: str) -> None:
+    def __init__(self, name: str, column: int) -> None:
         self.__column = column
         self.__name = name
 
