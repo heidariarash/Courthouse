@@ -189,7 +189,7 @@ class NumericalJudge:
         self.__new_out = None
         self.__output_type = None
 
-    def case(self, case:NumericalCase, data: np.ndarray, change_amount: int) -> None:
+    def case(self, data: np.ndarray, case:NumericalCase, change_amount: int) -> None:
         """
         Use this method to specify
         """
